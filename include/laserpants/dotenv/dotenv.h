@@ -108,7 +108,7 @@ private:
 };
 
 #if defined(_MSC_VER)
-int setenv(const char *name, const char *value, int overwrite)
+int dotenv::setenv(const char *name, const char *value, int overwrite)
 {
     int errcode = 0;
     if(!overwrite) {
