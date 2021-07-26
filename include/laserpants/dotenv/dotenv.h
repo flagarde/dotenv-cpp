@@ -98,11 +98,27 @@ public:
     static void init(int flags, const char* filename = ".env");
 
     static std::string getenv(const char* name, const std::string& def = "");
+    #if defined(_MSC_VER)
+    static int setenv(const char *name, const char *value, int overwrite);
+    #endif
 
 private:
     static void do_init(int flags, const char* filename);
     static std::string strip_quotes(const std::string& str);
 };
+
+#if defined(_MSC_VER)
+int setenv(const char *name, const char *value, int overwrite)
+{
+    int errcode = 0;
+    if(!overwrite) {
+        size_t envsize = 0;
+        errcode = getenv_s(&envsize, NULL, 0, name);
+        if(errcode || envsize) return errcode;
+    }
+    return _putenv_s(name, value);
+}
+#endif
 
 ///
 /// Read and initialize environment variables from the `.env` file, or a file
